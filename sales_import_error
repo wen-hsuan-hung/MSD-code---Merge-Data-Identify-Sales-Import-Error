@@ -1,0 +1,44 @@
+import pandas as pd
+import glob
+import os
+
+import_error_folder = input("please save the sales upload error file to a folder and paste the path to the folder here :    ")
+import_error_folder = import_error_folder.strip()
+
+file_name = input("please enter the file name which has import error:    ")
+file_name = file_name.strip()
+
+black_slash = '\\'
+
+path = input("please enter the path to backup folder:    ")
+path = path.strip()
+
+# print(path)
+filename = glob.glob(path + black_slash + file_name)
+
+# print(filename)
+
+latest = glob.glob(import_error_folder + black_slash + "*") #read the folder that contains sales upload error
+# print(latest)
+latest_file = max(latest, key=os.path.getctime)
+# print(latest_file)
+print("Please note that this code would help get the latest file in this folder, so please make sure that sales upload error file is the latest file you save in this folder!")
+
+latest_error_file = pd.read_excel(latest_file, header=None)
+latest_error_file.columns = ["error", "reason"]
+
+latest_error_file.head()
+
+
+for i in filename:
+    error_file = pd.read_excel(i)
+error_file["error"] = error_file.index
+error_file["error"] += 1
+error_file.head()
+
+df_inner = pd.merge(error_file, latest_error_file, on='error', how='inner')
+df_inner = pd.merge(error_file, latest_error_file, on='error', how='inner')
+df_inner = df_inner.drop(columns=['error', 'reason'])
+df_inner.head()
+
+df_inner.to_excel(file_name + "_未匯" + ".xlsx", encoding="utf-8", index=False, header=True)
