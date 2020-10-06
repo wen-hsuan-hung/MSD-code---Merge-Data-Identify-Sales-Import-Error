@@ -1,0 +1,92 @@
+import pandas as pd
+import glob
+from pandas import DataFrame
+import sys
+date_start = input("Please enter the start date(the format should be 0731, 0829):" ) #int
+# print(date_start), print(type(date_start))
+date_end = input("Please enter the end date(the format should be 0828, 0929):" ) #int
+
+path = input("please input the path to backup folder:")
+file_name_final= input("請輸入最終合併完成的檔案名稱:")
+
+
+if len(date_start) != 4 or len(date_end) != 4 :
+    print("format error, please enter again")
+    sys.exit()
+if int(date_end) - int(date_start) < 0:
+    print("end date should be greater than start date")
+    sys.exit()
+        
+#輸入起始和終點日期
+
+list_num = []
+for i in range (int(date_start), int(date_end)+1):
+    if len(str(i)) != 4:
+        i = format(i, "04") 
+        list_num.append(i)
+
+
+        
+#     print(type(i)) type int
+# print(list_num)
+#找出所有在這兩數之間的數
+
+    
+list_num_1 = [str(s) + "-1" for s in list_num] # (處理-1狀況)
+# print(list_num_1)
+list_num_2 = [str(s) + "-2" for s in list_num] # (處理-2狀況)
+# print(list_num_2)
+
+black_slash = '\\'
+
+# file_path_zm = black_slash*2 + "sgdata003" + back_slash + "tw-ftp\From_Distr\FNA_RawData\Backup" + back_slash + 'zmsdf2120'
+folder_path = path + black_slash + "zmsdf2120"
+print(folder_path)
+# filenames_zm = glob.glob(file_path_zm + "*.xlsx")
+filenames_zm = glob.glob(folder_path + "*.xlsx")
+# in_path.append(filenames_zm)
+# print(filenames_zm)
+# print(type(filenames_zm))
+#all files in the　path
+
+
+list_filename = []
+for num in list_num:
+    file_name = folder_path + str(num) + ".xlsx"
+    list_filename.append(file_name)
+# print(list_filename)
+
+
+for num1 in list_num_1:
+    file_name_1 = folder_path + str(num1) + ".xlsx"
+    list_filename.append(file_name_1)
+# print(list_filename)
+
+for num2 in list_num_2:
+    file_name_2 = folder_path + str(num2) + ".xlsx"
+    list_filename.append(file_name_2)
+# print(list_filename)
+
+matches = [x for x in list_filename if x in filenames_zm]
+print(matches)
+#找到所有檔案夾中應該要被合併的檔案
+
+df = pd.DataFrame() #空的dataframe
+
+for i in matches:
+    data = pd.read_excel(i)
+    if len(data.columns)==37:
+        df = df.append(data,ignore_index=True, sort=False)
+    else:
+        continue
+#     df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+# df.head()
+
+#add date
+df[['Report Day']] = df[['Z9DATE']].applymap(str).applymap(lambda s: "{}/{}/{}".format(s[0:4],s[4:6],s[6:]))
+# df
+
+df = df.sort_values(by=['Report Day'])
+# df
+
+df.to_excel(file_name_final + ".xlsx", encoding="utf-8", index=False, header=True)
