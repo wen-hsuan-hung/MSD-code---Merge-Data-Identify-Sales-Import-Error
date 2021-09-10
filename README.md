@@ -1,6 +1,4 @@
 # MSD-code
-After joining in MSD a month, I found that the process operation team applied to combine daily sales report for monthly sales check is inefficient, thus I initialized a python project which help merge daily sales report to monthly report.
+After joining in MSD a month, I found that the process operation team applied to combine daily sales report for monthly sales check is inefficient, thus I initialized a python project which help merge daily sales report to monthly report.Before the automation code I wrote, my team had to manually combine daily sales performance for monthly report. This merged data code reduced time spent on this task by 97.5%. 
 
-
-
-在公司任職期間，我也使用 power automate，將各部門自動化
+Beside merging daily sales to monthly report, I recognized the method of identifying sales import errors through sales data was inefficient. In the past, my team applied vlookup excel sheets to compare the daily sales report file with the file that compiled errors. To increase efficiency, I thus wrote another Python script that helped reduce the time spent finding sales import errors by 75%.
